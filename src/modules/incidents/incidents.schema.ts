@@ -41,38 +41,40 @@ export const createIncidentSchema = z.object({
     .max(5000, 'Description must not exceed 5000 characters'),
 
   category: z.enum(
-    [
-      IncidentCategory.Hardware,
-      IncidentCategory.Software,
-      IncidentCategory.Network,
-      IncidentCategory.Access_Permissions,
-      IncidentCategory.Email_Communication,
-      IncidentCategory.Other,
-    ],
-    {
-      required_error: 'Category is required',
-      invalid_type_error: `Category must be one of: ${Object.values(IncidentCategory).join(', ')}`,
-      errorMap: () => ({
-        message: `Category must be one of: ${Object.values(IncidentCategory).join(', ')}`,
-      }),
-    },
-  ),
+  [
+    IncidentCategory.Hardware,
+    IncidentCategory.Software,
+    IncidentCategory.Network,
+    IncidentCategory.Access_Permissions,
+    IncidentCategory.Email_Communication,
+    IncidentCategory.Other,
+  ],
+  {
+    errorMap: (issue) => ({
+      message:
+        issue.code === 'invalid_enum_value'
+          ? `Category must be one of: ${Object.values(IncidentCategory).join(', ')}`
+          : 'Category is required',
+    }),
+  },
+),
 
   priority: z.enum(
-    [
-      IncidentPriority.Low,
-      IncidentPriority.Medium,
-      IncidentPriority.High,
-      IncidentPriority.Critical,
-    ],
-    {
-      required_error: 'Priority is required',
-      invalid_type_error: `Priority must be one of: ${Object.values(IncidentPriority).join(', ')}`,
-      errorMap: () => ({
-        message: `Priority must be one of: ${Object.values(IncidentPriority).join(', ')}`,
-      }),
-    },
-  ),
+  [
+    IncidentPriority.Low,
+    IncidentPriority.Medium,
+    IncidentPriority.High,
+    IncidentPriority.Critical,
+  ],
+  {
+    errorMap: (issue) => ({
+      message:
+        issue.code === 'invalid_enum_value'
+          ? `Priority must be one of: ${Object.values(IncidentPriority).join(', ')}`
+          : 'Priority is required',
+    }),
+  },
+),
 
   attachment_info: z
     .object({
