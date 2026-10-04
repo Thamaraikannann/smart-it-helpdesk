@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "TypeScript Validation",
+      "trigger": "PostToolUse",
+      "matcher": ".*",
+      "description": "Runs TypeScript compilation after Kiro tool usage to catch implementation errors early.",
+      "action": {
+        "type": "command",
+        "command": "npm run build",
+        "timeout": 30
+      }
+    }
+  ]
+}
