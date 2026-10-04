@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+dist/
+frontend/dist/
+
+# Environment files — never commit secrets
+.env
+.env.local
+.env.*.local
+.env.test
+
+# Prisma generated client
+node_modules/.prisma/
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+
+# TypeScript incremental build info
+*.tsbuildinfo

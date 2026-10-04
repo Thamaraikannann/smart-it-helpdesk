@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  Employee
+  Support_Agent
+  Admin
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum IncidentStatus {
+  Open
+  In_Progress
+  On_Hold
+  Resolved
+  Closed
+}
+
+enum IncidentPriority {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum IncidentCategory {
+  Hardware
+  Software
+  Network
+  Access_Permissions
+  Email_Communication
+  Other
+}
+
+enum AuditOperation {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+// ---------------------------------------------------------------------------
+// Models
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String     @id @default(uuid())
+  email         String     @unique
+  display_name  String
+  password_hash String
+  role          Role
+  status        UserStatus @default(ACTIVE)
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+
+  incidents     Incident[] @relation("SubmittedBy")
+  assigned      Incident[] @relation("AssignedTo")
+  comments      Comment[]
+  audit_entries AuditLog[]
+}
+
+model Incident {
+  id                String           @id @default(uuid())
+  title             String           @db.VarChar(200)
+  description       String           @db.VarChar(5000)
+  category          IncidentCategory
+  priority          IncidentPriority
+  status            IncidentStatus   @default(Open)
+  submitter_id      String
+  submitter         User             @relation("SubmittedBy", fields: [submitter_id], references: [id])
+  assigned_to       String?
+  assignee          User?            @relation("AssignedTo", fields: [assigned_to], references: [id])
+  assigned_at       DateTime?
+  attachment_info   Json?            // { filename, size_bytes, mime_type } | null
+  ai_suggestions    Json?            // { category, priority, summary } | null
+  resolution_detail Json?            // { root_cause, resolution_steps, resolved_at } | null
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+
+  comments      Comment[]
+  audit_entries AuditLog[]
+
+  @@index([submitter_id])
+  @@index([status])
+  @@index([assigned_to])
+  @@index([created_at])
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  incident_id String
+  incident    Incident @relation(fields: [incident_id], references: [id])
+  author_id   String
+  author      User     @relation(fields: [author_id], references: [id])
+  body        String   @db.VarChar(2000)
+  is_internal Boolean  @default(false)
+  created_at  DateTime @default(now())
+
+  @@index([incident_id])
+}
+
+model AuditLog {
+  id          String         @id @default(uuid())
+  incident_id String
+  incident    Incident       @relation(fields: [incident_id], references: [id])
+  actor_id    String
+  actor       User           @relation(fields: [actor_id], references: [id])
+  operation   AuditOperation
+  field       String?
+  old_value   Json?
+  new_value   Json?
+  timestamp   DateTime       @default(now())
+
+  @@index([incident_id])
+  @@index([timestamp])
+}

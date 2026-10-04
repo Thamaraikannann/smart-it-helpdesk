@@ -1,0 +1,40 @@
+{
+  "name": "smart-it-helpdesk",
+  "version": "1.0.0",
+  "description": "Smart IT Helpdesk and Incident Management System",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "express": "4.18.2",
+    "@prisma/client": "5.7.1",
+    "jsonwebtoken": "9.0.2",
+    "bcrypt": "5.1.1",
+    "zod": "3.22.4",
+    "axios": "1.6.2",
+    "express-rate-limit": "7.1.5",
+    "pino": "8.17.2",
+    "pino-http": "9.0.0",
+    "lru-cache": "10.1.0"
+  },
+  "devDependencies": {
+    "prisma": "5.7.1",
+    "typescript": "5.3.3",
+    "ts-node": "10.9.2",
+    "ts-jest": "29.1.1",
+    "jest": "29.7.0",
+    "@types/express": "4.17.21",
+    "@types/jsonwebtoken": "9.0.5",
+    "@types/bcrypt": "5.0.2",
+    "@types/jest": "29.5.11",
+    "@types/supertest": "6.0.2",
+    "@types/node": "20.10.6",
+    "supertest": "6.3.3",
+    "fast-check": "3.14.0"
+  }
+}
