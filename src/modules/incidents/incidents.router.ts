@@ -1,5 +1,6 @@
 // TODO: Wire incident routes (Tasks 5.5, 6.1, 7.3)
 import { Router } from 'express';
+import { authMiddleware } from '../../middleware/auth';
 import {
   createIncident,
   listIncidents,
@@ -8,6 +9,7 @@ import {
 } from './incidents.controller';
 
 const router = Router();
+router.use(authMiddleware);
 
 // POST   /api/v1/incidents
 router.post('/', createIncident);

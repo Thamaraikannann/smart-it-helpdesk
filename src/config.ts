@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { z } from 'zod';
 
 const envSchema = z.object({
@@ -5,7 +6,7 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   PORT: z.coerce.number().default(3001),
   AI_API_URL: z.string().url('AI_API_URL must be a valid URL'),
-  AI_API_KEY: z.string().min(1, 'AI_API_KEY is required'),
+  AI_API_KEY: z.string().default(''),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
 
