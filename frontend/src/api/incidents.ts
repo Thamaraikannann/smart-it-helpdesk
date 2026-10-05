@@ -81,3 +81,77 @@ export async function fetchIncidents(
   });
   return response.data;
 }
+
+// ---------------------------------------------------------------------------
+// Create incident
+// ---------------------------------------------------------------------------
+
+export interface CreateIncidentPayload {
+  title: string;
+  description: string;
+  category: IncidentCategory;
+  priority: IncidentPriority;
+}
+
+export interface CreateIncidentResponse {
+  data: Incident;
+}
+
+export async function createIncident(
+  payload: CreateIncidentPayload,
+): Promise<Incident> {
+  const response = await apiClient.post<CreateIncidentResponse>(
+    '/incidents',
+    payload,
+  );
+  return response.data.data;
+}
+
+// ---------------------------------------------------------------------------
+// Fetch single incident
+// ---------------------------------------------------------------------------
+
+export async function fetchIncident(id: string): Promise<Incident> {
+  const response = await apiClient.get<{ data: Incident }>(`/incidents/${id}`);
+  return response.data.data;
+}
+
+// ---------------------------------------------------------------------------
+// Update incident
+// ---------------------------------------------------------------------------
+
+export interface ResolutionDetail {
+  root_cause: string;
+  resolution_steps: string;
+  resolved_at: string; // ISO 8601
+}
+
+export interface UpdateIncidentPayload {
+  status?: IncidentStatus;
+  priority?: IncidentPriority;
+  assigned_to?: string | null;
+  resolution_detail?: ResolutionDetail;
+}
+
+export async function updateIncident(
+  id: string,
+  payload: UpdateIncidentPayload,
+): Promise<Incident> {
+  const response = await apiClient.patch<{ data: Incident }>(
+    `/incidents/${id}`,
+    payload,
+  );
+  return response.data.data;
+}
+
+// ---------------------------------------------------------------------------
+// Status transition map (mirrors backend ALLOWED_TRANSITIONS)
+// ---------------------------------------------------------------------------
+
+export const ALLOWED_TRANSITIONS: Record<IncidentStatus, IncidentStatus[]> = {
+  Open: ['In_Progress', 'On_Hold'],
+  In_Progress: ['On_Hold', 'Resolved'],
+  On_Hold: ['In_Progress'],
+  Resolved: ['Closed'],
+  Closed: [],
+};
