@@ -1,9 +1,12 @@
-// TODO: Wire comment routes (Task 8.1)
-// Note: This router is mounted at /api/v1/incidents/:id/comments
+// Mounted at /api/v1/incidents/:id/comments
 import { Router } from 'express';
+import { authMiddleware } from '../../middleware/auth';
 import { addComment, listComments } from './comments.controller';
 
+// mergeParams: true so :id from the parent incidents route is available
 const router = Router({ mergeParams: true });
+
+router.use(authMiddleware);
 
 // POST   /api/v1/incidents/:id/comments
 router.post('/', addComment);
